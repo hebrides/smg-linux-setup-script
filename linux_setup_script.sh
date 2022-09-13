@@ -111,6 +111,7 @@ alias dir='ls'
 alias h='history'
 alias path='echo -e \${PATH//:/\\\n}'
 alias now='date +%T'
+alias fd='fdfind'
 " >> ~/.bash_aliases
 
 cp ~/.bash_aliases /home/$name
