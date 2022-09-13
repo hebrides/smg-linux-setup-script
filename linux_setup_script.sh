@@ -76,9 +76,9 @@ systemctl enable fail2ban
 # 15 9 17 3 1 = Sunday, March 17th 0915 hrs
 # https://cron.help/ or https://crontab.guru
 # update weekly at 3 AM Sunday
-echo "0 3 * * 0 root bash (apt update && apt -y upgrade) > /dev/null" > /etc/cron.d/updates
+echo "0 3 * * 0 root bash (apt update && apt -y upgrade) > /dev/null" >> /etc/cron.d/updates
 # restart server every 3 months at 3AM on the 1st
-echo "0 3 1 1-12/3 * (/sbin/shutdown -r now) > /dev/null" > /etc/cron.d/updates
+echo "0 3 1 1-12/3 * (/sbin/shutdown -r now) > /dev/null" >> /etc/cron.d/updates
 
 ## install other favorite server apps
 echo "Installing useful server apps"
