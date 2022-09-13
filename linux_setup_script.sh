@@ -1,89 +1,118 @@
-######################################
-# smg mobile gett rektt init linux script
+########################################
+#                                      #
+# SMG Mobile Linux Server Basic Set Up #
+#                                      #
+#    Expects to be on Ubuntu Linux     #
+#                                      #
+########################################
 
-# note: this expects to be on ubuntu
-
+## update packages
 apt update
 apt upgrade -y
 
-adduser admin
+## create a new admin user
+
+echo "Please enter a user name for the new admin user (defaults to 'admin'): "
+read ADMIN
+adduser $ADMIN
 # asks for password
+usermod -aG sudo $ADMIN
 
-usermod -aG sudo admin
-
-
-
-######################################
-# ssh setup
-
-
+## setup ssh
 # turn root login off
 sed --in-place=_bak 's/PermitRootLogin\ yes/PermitRootLogin\ no/g' /etc/ssh/sshd_config
-
 # turn off password auth
 sed --in-place=_bak 's/PasswordAuthentication\ yes/PasswordAuthentication\ no/g' /etc/ssh/sshd_config
-
 # default SSH port to 22 if not set
-if [ -z "$SSH_PORT" ]; then SSH_PORT=22 ; else echo "SSH_PORT=$SSH_PORT"; fi
-
+ if [ -z "$SSH_PORT" ]; then SSH_PORT=22 ; else echo "SSH_PORT=$SSH_PORT"; fi
 # change port
 echo "Port $SSH_PORT" >> /etc/ssh/sshd_config
-
 # add $HOME/.ssh/authorized_keys as the authorized keys file
 echo "AuthorizedKeysFile     .ssh/authorized_keys" >> /etc/ssh/sshd_config
-
-# add a banner
-echo "SMG MOBILE" > /etc/ssh/banner
+# add ssh banner
+echo "
+███████╗███╗   ███╗ ██████╗ ███╗   ███╗ ██████╗ ██████╗ ██╗██╗     ███████╗
+██╔════╝████╗ ████║██╔════╝ ████╗ ████║██╔═══██╗██╔══██╗██║██║     ██╔════╝
+███████╗██╔████╔██║██║  ███╗██╔████╔██║██║   ██║██████╔╝██║██║     █████╗
+╚════██║██║╚██╔╝██║██║   ██║██║╚██╔╝██║██║   ██║██╔══██╗██║██║     ██╔══╝
+███████║██║ ╚═╝ ██║╚██████╔╝██║ ╚═╝ ██║╚██████╔╝██████╔╝██║███████╗███████╗
+╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝╚══════╝╚══════╝
+" > /etc/ssh/banner
 echo "Banner /etc/ssh/banner" >> /etc/ssh/sshd_config
-
 # add ssh key data to the admin user
-mkdir /home/admin/.ssh
-chown admin:admin /home/admin/.ssh
+mkdir /home/$ADMIN/.ssh
+chown $ADMIN:$ADMIN /home/$ADMIN/.ssh
+echo "# add your public ssh key(s) here for the admin user" > /home/$ADMIN/.ssh/authorized_keys
+nano /home/$ADMIN/.ssh/authorized_keys
+chown $ADMIN:$ADMIN /home/$ADMIN/.ssh/authorized_keys
 
-echo "# add your public ssh key(s) here for the admin user" > /home/admin/.ssh/authorized_keys
-nano /home/admin/.ssh/authorized_keys
-chown admin:admin /home/admin/.ssh/authorized_keys
-
-
-######################################
-# fire wall set up
-
+## fire wall set up
 # add uncomplicated fire wall package
 apt install ufw -y
-
 # ssh
 ufw deny in 22
 ufw allow out 22
-
 # special ssh port
 ufw allow in $SSH_PORT
 ufw allow out $SSH_PORT
-
-ufw allow in http 
+# http
+ufw allow in http
 ufw allow out http
-
 ufw allow in https
 ufw allow out https
-
-# to be added
+# limits
 # ufw limit 80/tcp
 # ufw limit 443/tcp
-
 ufw enable
 
-######################################
-# fail2ban - to be added
+## install fail2ban
+# https://linuxhandbook.com/fail2ban-basic/
+apt install fail2ban -y
+systemctl start fail2ban
+systemctl enable fail2ban
 
+## useful cron jobs
+# min/hr/day/mth/wkd:
+# 15 9 17 3 1 = Sunday, March 17th 0915 hrs
+# https://cron.help/ or https://crontab.guru
+# update weekly at 3 AM Sunday
+echo "0 3 * * 0 root bash (apt update && apt -y upgrade) > /dev/null" > /etc/cron.d/updates
+# restart server every 3 months at 3AM on the 1st
+echo "0 3 1 1-12/3 * (/sbin/shutdown -r now) > /dev/null" > /etc/cron.d/updates
 
-###########################################################
-# automatic restart and updates cron job ( sunday at 6am )
+## install other favorite server apps
+echo "Installing useful server apps"
+apt install ripgrep -y
+apt install fd-find -y
 
-echo "0 5 * * 0 root bash (apt update && apt -y upgrade && /sbin/shutdown -r now) > /dev/null" > /etc/cron.d/updates
+## set time zone
+timedatectl set-timezone America/Los_Angeles
 
+## add useful bash scripts
+echo "
+# Dir & Nav Shortcuts
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias up1='cd ..'
+alias up2='cd ../..'
+alias up3='cd ../../..'
+alias up4='cd ../../../..'
+alias up5='cd ../../../../..'
+alias up6='cd ../../../../../..'
+alias home='cd ~'
+alias r='cd /'
+alias root='cd /'
+# Misc
+alias cls='clear'
+alias dir='ls'
+alias h='history'
+alias path='echo -e \${PATH//:/\\\n}'
+alias now='date +%T'
+" >> ~/.bash_aliases
 
-##############################################################
-# set eastern time                    
-
-timedatectl set-timezone America/New_York
-
+cp ~/.bash_aliases /home/$name
+## reboot
 reboot
