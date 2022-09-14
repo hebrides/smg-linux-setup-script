@@ -86,6 +86,7 @@ echo "0 3 1 1-12/3 * (/sbin/shutdown -r now) > /dev/null" >> /etc/cron.d/updates
 echo "Installing useful server apps"
 apt install ripgrep -y
 apt install fd-find -y
+apt install jq -y
 
 ## set time zone
 timedatectl set-timezone America/Los_Angeles
