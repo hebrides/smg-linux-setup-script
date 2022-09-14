@@ -1,6 +1,8 @@
 ########################################
 #                                      #
-# SMG Mobile Linux Server Basic Set Up #
+#        SMG Mobile Linux Server       #
+#                                      #
+#             Basic Set Up             #
 #                                      #
 #    Expects to be on Ubuntu Linux     #
 #                                      #
