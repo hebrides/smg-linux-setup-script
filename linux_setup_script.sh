@@ -117,6 +117,6 @@ alias now='date +%T'
 alias fd='fdfind'
 " >> ~/.bash_aliases
 
-cp ~/.bash_aliases /home/$name
+cp ~/.bash_aliases /home/$ADMIN
 ## reboot
 reboot
