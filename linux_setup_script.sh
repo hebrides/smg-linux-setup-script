@@ -4,7 +4,7 @@
 #                                      #
 #             Basic Set Up             #
 #                                      #
-#    Expects to be on Ubuntu Linux     #
+#            Ubuntu Version            #
 #                                      #
 ########################################
 
