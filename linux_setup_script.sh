@@ -118,5 +118,10 @@ alias fd='fdfind'
 " >> ~/.bash_aliases
 
 cp ~/.bash_aliases /home/$ADMIN
+
+## Prepare for SSL
+cd /home/$ADMIN
+curl https://get.acme.sh | sh -s email=admin@smgmobile.com
+
 ## reboot
 reboot
