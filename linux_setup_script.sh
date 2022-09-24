@@ -48,6 +48,19 @@ echo "# add your public ssh key(s) here for the admin user" > /home/$ADMIN/.ssh/
 nano /home/$ADMIN/.ssh/authorized_keys
 chown $ADMIN:$ADMIN /home/$ADMIN/.ssh/authorized_keys
 
+## swap file
+free -h
+echo "
+Enter a swap file value in GB (Recommend 2-8 GB) based on your free MEM shown above. 
+(Refer to https://bitlaunch.io/blog/how-to-create-and-adjust-swap-space-in-ubuntu-20-04/) "
+read SWAP
+sudo fallocate -l ${SWAP}G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+cp /etc/fstab /etc/fstab.bak
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
 ## fire wall set up
 # add uncomplicated fire wall package
 apt install ufw -y
