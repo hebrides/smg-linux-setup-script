@@ -101,6 +101,14 @@ echo "Installing useful server apps"
 apt install ripgrep -y
 apt install fd-find -y
 apt install jq -y
+apt install ansible -y
+apt install docker -y
+echo "
+You may wish to install Micro8s, ref:
+https://ubuntu.com/tutorials/install-a-local-kubernetes-with-microk8s#1-overview
+or
+https://www.cncf.io/blog/2021/03/23/quick-application-deployments-on-microk8s-using-helm-charts/
+"
 
 ## set time zone
 timedatectl set-timezone America/Los_Angeles
