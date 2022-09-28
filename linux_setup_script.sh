@@ -16,6 +16,7 @@ apt upgrade -y
 
 echo "Please enter a user name for the new admin user (defaults to 'admin'): "
 read ADMIN
+if [ -z "$ADMIN" ]; then ADMIN=admin 
 adduser $ADMIN
 # asks for password
 usermod -aG sudo $ADMIN
